@@ -24,6 +24,24 @@ app.use(
     extended: true,
   })
 );
+
+const orderRoutes = require("./routes/orders");
+
+app.use("/orders",orderRoutes);
+
+app.use((req, res, next) => {
+  const error = new Error("This is beans shipping server. Requested resource not found ");
+  error.status = 404;
+  next(error);
+});
+
+app.use((error, req, res, next) => {
+  next;
+  res.status(error.status || 500).json({
+    status: error.status,
+    error: error.message,
+  });
+});
 const server = require("http").createServer(app);
 server.listen(port, (d) => { console.log("Server running on port" + port) });
 module.exports = app;
